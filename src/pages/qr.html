@@ -2,15 +2,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page 1</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>QR Code Hub</title>
+    <link rel="stylesheet" href="src/css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="/muzeji/src/js/main.js" defer></script>
+    <script src="src/js/main.js" defer></script>
 </head>
 <body>
-    to Page 1
-    <div id="qr"></div>
+    <h1>QR Code Hub</h1>
+
+    <div>
+        <h2>Page 1</h2>
+        <div id="qr1"></div>
+        <p><a href="src/pages/lapa,1.html">Go to Page 1</a></p>
+    </div>
+
+    <div>
+        <h2>Page 2</h2>
+        <div id="qr2"></div>
+        <p><a href="src/pages/lapa,2.html">Go to Page 2</a></p>
+    </div>
 
     <p><a href="https://scarletthedragon.github.io/muzeji/">Back to Main Page</a></p>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            new QRCode(document.getElementById("qr1"), {
+                text: "https://scarletthedragon.github.io/muzeji/src/pages/lapa,1.html",
+                width: 128,
+                height: 128
+            });
+
+            new QRCode(document.getElementById("qr2"), {
+                text: "https://scarletthedragon.github.io/muzeji/src/pages/lapa,2.html",
+                width: 128,
+                height: 128
+            });
+        });
+    </script>
 </body>
 </html>
