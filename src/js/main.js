@@ -1,25 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("main.js loaded successfully!");
+    console.log("✅ main.js loaded!");
 
     let synth = window.speechSynthesis;
     let utterance = null;
 
-    // Function to Ensure Voices are Loaded
     function loadVoices(callback) {
-        let voices = synth.getVoices();
-        if (voices.length) {
-            callback(voices);
-        } else {
-            synth.onvoiceschanged = function () {
-                callback(synth.getVoices());
-            };
-        }
+        let checkVoices = setInterval(() => {
+            let voices = synth.getVoices();
+            if (voices.length) {
+                clearInterval(checkVoices);
+                callback(voices);
+            }
+        }, 100);
     }
 
-    // Function to Speak Text
     function speakText(text, lang) {
         if (!synth) {
-            console.error("Text-to-Speech not supported.");
+            console.error("❌ Text-to-Speech not supported.");
             return;
         }
 
@@ -30,21 +27,45 @@ document.addEventListener("DOMContentLoaded", function () {
         utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang;
 
-        // Ensure voices are loaded before speaking
         loadVoices(function (voices) {
-            let availableVoices = voices.filter(v => v.lang.startsWith(lang));
-            if (availableVoices.length) {
-                utterance.voice = availableVoices[0]; // Use the first matching voice
-                console.log("Using voice:", utterance.voice.name);
+            let selectedVoice = voices.find(v => v.lang.startsWith(lang));
+
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+                console.log("✅ Using voice:", selectedVoice.name, "for", lang);
             } else {
-                console.warn("No specific voice found, using default system voice.");
+                console.warn("⚠️ No matching voice found. Using default system voice.");
             }
+
             synth.speak(utterance);
         });
     }
 
-    // Button Click Event
+    function pauseSpeech() {
+        if (synth.speaking && !synth.paused) {
+            synth.pause();
+            console.log("⏸ Speech paused.");
+        }
+    }
+
+    function resumeSpeech() {
+        if (synth.paused) {
+            synth.resume();
+            console.log("▶️ Speech resumed.");
+        }
+    }
+
+    function stopSpeech() {
+        if (synth.speaking) {
+            synth.cancel();
+            console.log("⏹ Speech stopped.");
+        }
+    }
+
     const speakButton = document.getElementById("speakButton");
+    const pauseButton = document.getElementById("pauseButton");
+    const resumeButton = document.getElementById("resumeButton");
+    const stopButton = document.getElementById("stopButton");
     const languageSelector = document.getElementById("languageSelector");
 
     if (speakButton && languageSelector) {
@@ -54,4 +75,8 @@ document.addEventListener("DOMContentLoaded", function () {
             speakText(text, selectedLang);
         });
     }
+
+    if (pauseButton) pauseButton.addEventListener("click", pauseSpeech);
+    if (resumeButton) resumeButton.addEventListener("click", resumeSpeech);
+    if (stopButton) stopButton.addEventListener("click", stopSpeech);
 });
