@@ -5,30 +5,15 @@
     <title>QR Code Navigation</title>
     <link rel="stylesheet" href="src/css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script>
-        function generateQRCode(id, url) {
-            new QRCode(document.getElementById(id), {
-                text: url,
-                width: 128,
-                height: 128
-            });
-        }
-        
-        window.onload = function() {
-    generateQRCode("qr1", "https://scarletthedragon.github.io/muzeji/src/pages/lapa,1.html");
-    generateQRCode("qr2", "https://scarletthedragon.github.io/muzeji/src/pages/lapa,2.html");
-}
-
-    </script>
 </head>
 <body>
-    <h1>Scan a QR Code to Navigate</h1>
+
     <div>
-        <div id="qr1"></div>
+        
         <p><a href="https://scarletthedragon.github.io/muzeji/src/pages/lapa,1.html">Go to Page 1</a></p>
     </div>
     <div>
-        <div id="qr2"></div>
+       
         <p><a href="https://scarletthedragon.github.io/muzeji/src/pages/lapa,2.html">Go to Page 2</a></p>
     </div>
 </body>
