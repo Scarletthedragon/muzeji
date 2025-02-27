@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let synth = window.speechSynthesis;
     let utterance = null;
-    let isPaused = false; // Track pause state
+    let isPaused = false; // Track if speech is paused
 
     function loadVoices(callback) {
         let checkVoices = setInterval(() => {
@@ -21,9 +21,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (utterance) {
-            synth.cancel(); // Stop previous speech
-        }
+        // Stop any existing speech
+        synth.cancel();
+        isPaused = false;
+        updatePauseResumeButton(); // Reset button state
 
         utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang;
@@ -40,10 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             synth.speak(utterance);
         });
-
-        // Reset pause state when new speech starts
-        isPaused = false;
-        pauseResumeButton.innerText = "⏸ Pause";
     }
 
     function togglePauseResume() {
@@ -51,14 +48,20 @@ document.addEventListener("DOMContentLoaded", function () {
             if (synth.paused) {
                 synth.resume();
                 console.log("▶️ Speech resumed.");
-                pauseResumeButton.innerText = "⏸ Pause";
                 isPaused = false;
             } else {
                 synth.pause();
                 console.log("⏸ Speech paused.");
-                pauseResumeButton.innerText = "▶️ Resume";
                 isPaused = true;
             }
+            updatePauseResumeButton(); // Update button text
+        }
+    }
+
+    function updatePauseResumeButton() {
+        const pauseResumeButton = document.getElementById("pauseResumeButton");
+        if (pauseResumeButton) {
+            pauseResumeButton.innerText = isPaused ? "▶️ Resume" : "⏸ Pause";
         }
     }
 
