@@ -5,7 +5,7 @@
     <title>QR Code Hub</title>
     <link rel="stylesheet" href="../css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="/muzeji/src/js/main.js" defer></script>
+    <script src="../js/main.js" defer></script>
 </head>
 <body>
     <h1>QR Code Hub</h1>
@@ -26,17 +26,24 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            new QRCode(document.getElementById("qr1"), {
-                text: "https://scarletthedragon.github.io/muzeji/src/pages/lapa,1.html",
-                width: 128,
-                height: 128
-            });
+            function generateQR(id, url) {
+                let qrContainer = document.getElementById(id);
+                if (qrContainer) {
+                    new QRCode(qrContainer, {
+                        text: url,
+                        width: 128,
+                        height: 128
+                    });
+                } else {
+                    console.error("QR container not found: " + id);
+                }
+            }
 
-            new QRCode(document.getElementById("qr2"), {
-                text: "https://scarletthedragon.github.io/muzeji/src/pages/lapa,2.html",
-                width: 128,
-                height: 128
-            });
+            // Wait for QRCode library to load before generating
+            setTimeout(() => {
+                generateQR("qr1", "https://scarletthedragon.github.io/muzeji/src/pages/lapa,1.html");
+                generateQR("qr2", "https://scarletthedragon.github.io/muzeji/src/pages/lapa,2.html");
+            }, 500); // Delay 500ms to ensure the library is ready
         });
     </script>
 </body>

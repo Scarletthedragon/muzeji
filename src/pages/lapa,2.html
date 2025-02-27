@@ -5,11 +5,10 @@
     <title>Page 2</title>
     <link rel="stylesheet" href="../css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="/muzeji/src/js/main.js" defer></script>
+    <script src="../js/main.js" defer></script> <!-- ✅ Fixed script path -->
 </head>
 <body>
     <h1>Welcome to Page 2</h1>
-    <div id="qr"></div>
 
     <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -22,16 +21,11 @@
     </select>
     
     <button id="speakButton">🔊 Speak</button>
-    <button id="pauseResumeButton">⏸ Pause</button> <!-- Correct ID -->
-    
-    <audio id="audioPlayer"></audio>
-    
-    
-    
-    
+    <button id="pauseResumeButton">⏸ Pause</button>
 
-    
+    <audio id="audioPlayer"></audio>
 
     <p><a href="https://scarletthedragon.github.io/muzeji/">Back to Main Page</a></p>
+
 </body>
 </html>

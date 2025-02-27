@@ -23,8 +23,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Stop any existing speech
         synth.cancel();
-        isPaused = false;
-        updatePauseResumeButton(); // Reset button state
+        isPaused = false; // Reset pause state
+        updatePauseResumeButton(); // ✅ Reset button text when new speech starts
 
         utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang;
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("⏸ Speech paused.");
                 isPaused = true;
             }
-            updatePauseResumeButton(); // Update button text
+            updatePauseResumeButton(); // ✅ Update button text
         }
     }
 
