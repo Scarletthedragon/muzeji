@@ -40,26 +40,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
             synth.speak(utterance);
         });
+
+        // Reset pause state when new speech starts
+        isPaused = false;
+        pauseResumeButton.innerText = "⏸ Pause";
     }
 
-    function togglePause() {
+    function togglePauseResume() {
         if (synth.speaking) {
             if (synth.paused) {
                 synth.resume();
                 console.log("▶️ Speech resumed.");
-                togglePauseButton.innerText = "⏸ Pause";
+                pauseResumeButton.innerText = "⏸ Pause";
                 isPaused = false;
             } else {
                 synth.pause();
                 console.log("⏸ Speech paused.");
-                togglePauseButton.innerText = "▶️ Resume";
+                pauseResumeButton.innerText = "▶️ Resume";
                 isPaused = true;
             }
         }
     }
 
     const speakButton = document.getElementById("speakButton");
-    const togglePauseButton = document.getElementById("togglePauseButton");
+    const pauseResumeButton = document.getElementById("pauseResumeButton");
     const languageSelector = document.getElementById("languageSelector");
 
     if (speakButton && languageSelector) {
@@ -70,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    if (togglePauseButton) {
-        togglePauseButton.addEventListener("click", togglePause);
+    if (pauseResumeButton) {
+        pauseResumeButton.addEventListener("click", togglePauseResume);
     }
 });
