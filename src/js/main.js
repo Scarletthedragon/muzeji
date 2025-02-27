@@ -3,13 +3,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let synth = window.speechSynthesis;
     let utterance = null;
-    let isPaused = false; // Track if speech is paused
+    let isPaused = false;
+    let voicesLoaded = false; // Track if voices are available
 
     function loadVoices(callback) {
         let checkVoices = setInterval(() => {
             let voices = synth.getVoices().filter(v => v.lang === "en-US" || v.lang === "lv-LV");
             if (voices.length) {
                 clearInterval(checkVoices);
+                voicesLoaded = true;
                 callback(voices);
             }
         }, 100);
@@ -21,26 +23,32 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        if (!voicesLoaded) {
+            console.warn("⚠️ Voices not loaded yet, trying again...");
+            loadVoices(() => speakText(text, lang));
+            return;
+        }
+
         // Stop any existing speech
         synth.cancel();
-        isPaused = false; // Reset pause state
-        updatePauseResumeButton(); // ✅ Reset button text when new speech starts
+        isPaused = false;
+        updatePauseResumeButton();
 
         utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang;
 
-        loadVoices(function (voices) {
-            let selectedVoice = voices.find(v => v.lang === lang);
+        let selectedVoice = synth.getVoices().find(v => v.lang === lang);
+        if (selectedVoice) {
+            utterance.voice = selectedVoice;
+            console.log("✅ Using voice:", selectedVoice.name, "for", lang);
+        } else {
+            console.warn("⚠️ No matching voice found. Using default system voice.");
+        }
 
-            if (selectedVoice) {
-                utterance.voice = selectedVoice;
-                console.log("✅ Using voice:", selectedVoice.name, "for", lang);
-            } else {
-                console.warn("⚠️ No matching voice found. Using default system voice.");
-            }
-
+        // Require a user click before speaking (fixes mobile autoplay block)
+        document.body.addEventListener("click", () => {
             synth.speak(utterance);
-        });
+        }, { once: true }); // Ensures it only runs once
     }
 
     function togglePauseResume() {
@@ -54,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("⏸ Speech paused.");
                 isPaused = true;
             }
-            updatePauseResumeButton(); // ✅ Update button text
+            updatePauseResumeButton();
         }
     }
 
