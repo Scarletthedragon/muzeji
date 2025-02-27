@@ -3,10 +3,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let synth = window.speechSynthesis;
     let utterance = null;
+    let isPaused = false; // Track pause state
 
     function loadVoices(callback) {
         let checkVoices = setInterval(() => {
-            let voices = synth.getVoices();
+            let voices = synth.getVoices().filter(v => v.lang === "en-US" || v.lang === "lv-LV");
             if (voices.length) {
                 clearInterval(checkVoices);
                 callback(voices);
@@ -28,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
         utterance.lang = lang;
 
         loadVoices(function (voices) {
-            let selectedVoice = voices.find(v => v.lang.startsWith(lang));
+            let selectedVoice = voices.find(v => v.lang === lang);
 
             if (selectedVoice) {
                 utterance.voice = selectedVoice;
@@ -41,31 +42,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function pauseSpeech() {
-        if (synth.speaking && !synth.paused) {
-            synth.pause();
-            console.log("⏸ Speech paused.");
-        }
-    }
-
-    function resumeSpeech() {
-        if (synth.paused) {
-            synth.resume();
-            console.log("▶️ Speech resumed.");
-        }
-    }
-
-    function stopSpeech() {
+    function togglePause() {
         if (synth.speaking) {
-            synth.cancel();
-            console.log("⏹ Speech stopped.");
+            if (synth.paused) {
+                synth.resume();
+                console.log("▶️ Speech resumed.");
+                togglePauseButton.innerText = "⏸ Pause";
+                isPaused = false;
+            } else {
+                synth.pause();
+                console.log("⏸ Speech paused.");
+                togglePauseButton.innerText = "▶️ Resume";
+                isPaused = true;
+            }
         }
     }
 
     const speakButton = document.getElementById("speakButton");
-    const pauseButton = document.getElementById("pauseButton");
-    const resumeButton = document.getElementById("resumeButton");
-    const stopButton = document.getElementById("stopButton");
+    const togglePauseButton = document.getElementById("togglePauseButton");
     const languageSelector = document.getElementById("languageSelector");
 
     if (speakButton && languageSelector) {
@@ -76,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    if (pauseButton) pauseButton.addEventListener("click", pauseSpeech);
-    if (resumeButton) resumeButton.addEventListener("click", resumeSpeech);
-    if (stopButton) stopButton.addEventListener("click", stopSpeech);
+    if (togglePauseButton) {
+        togglePauseButton.addEventListener("click", togglePause);
+    }
 });
