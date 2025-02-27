@@ -2,53 +2,49 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("main.js loaded successfully!");
 
     let synth = window.speechSynthesis;
-    let utterance = null; // Store the speech object
+    let utterance = null;
+
+    // Function to Ensure Voices are Loaded
+    function loadVoices(callback) {
+        let voices = synth.getVoices();
+        if (voices.length) {
+            callback(voices);
+        } else {
+            synth.onvoiceschanged = function () {
+                callback(synth.getVoices());
+            };
+        }
+    }
 
     // Function to Speak Text
     function speakText(text, lang) {
         if (!synth) {
-            console.error("Text-to-Speech not supported in this browser.");
+            console.error("Text-to-Speech not supported.");
             return;
         }
 
         if (utterance) {
-            synth.cancel(); // Stop previous speech if playing
+            synth.cancel(); // Stop previous speech
         }
 
         utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = lang;
-        synth.speak(utterance);
-    }
 
-    // Function to Pause Speech
-    function pauseSpeech() {
-        if (synth.speaking && !synth.paused) {
-            synth.pause();
-            console.log("Speech paused.");
-        }
-    }
-
-    // Function to Resume Speech
-    function resumeSpeech() {
-        if (synth.paused) {
-            synth.resume();
-            console.log("Speech resumed.");
-        }
-    }
-
-    // Function to Stop Speech
-    function stopSpeech() {
-        if (synth.speaking) {
-            synth.cancel();
-            console.log("Speech stopped.");
-        }
+        // Ensure voices are loaded before speaking
+        loadVoices(function (voices) {
+            let availableVoices = voices.filter(v => v.lang.startsWith(lang));
+            if (availableVoices.length) {
+                utterance.voice = availableVoices[0]; // Use the first matching voice
+                console.log("Using voice:", utterance.voice.name);
+            } else {
+                console.warn("No specific voice found, using default system voice.");
+            }
+            synth.speak(utterance);
+        });
     }
 
     // Button Click Event
     const speakButton = document.getElementById("speakButton");
-    const pauseButton = document.getElementById("pauseButton");
-    const resumeButton = document.getElementById("resumeButton");
-    const stopButton = document.getElementById("stopButton");
     const languageSelector = document.getElementById("languageSelector");
 
     if (speakButton && languageSelector) {
@@ -58,9 +54,4 @@ document.addEventListener("DOMContentLoaded", function () {
             speakText(text, selectedLang);
         });
     }
-
-    // Pause, Resume, and Stop Buttons
-    if (pauseButton) pauseButton.addEventListener("click", pauseSpeech);
-    if (resumeButton) resumeButton.addEventListener("click", resumeSpeech);
-    if (stopButton) stopButton.addEventListener("click", stopSpeech);
 });
