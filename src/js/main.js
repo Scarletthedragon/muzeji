@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (voices.length) {
                 clearInterval(checkVoices);
                 voicesLoaded = true;
+                console.log("✅ Voices loaded:", voices);
                 callback(voices);
             }
         }, 100);
@@ -48,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Require a user click before speaking (fixes mobile autoplay block)
         document.body.addEventListener("click", () => {
             synth.speak(utterance);
+            console.log("🔊 Speaking:", text);
         }, { once: true }); // Ensures it only runs once
     }
 
@@ -88,4 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (pauseResumeButton) {
         pauseResumeButton.addEventListener("click", togglePauseResume);
     }
+
+    // Load voices initially
+    loadVoices(() => console.log("Voices are ready to use."));
 });
