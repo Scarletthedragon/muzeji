@@ -8,16 +8,43 @@
     <script src="src/js/main.js" defer></script> <!-- ✅ Fixed path -->
 </head>
 <body>
+    <h1>QR Code Hub</h1>
 
     <div>
+        <h2>Page 1</h2>
+        <div id="qr1"></div>
         <p><a href="https://scarletthedragon.github.io/muzeji/src/pages/lapa,1.html">Go to Page 1</a></p>
     </div>
+
     <div>
+        <h2>Page 2</h2>
+        <div id="qr2"></div>
         <p><a href="https://scarletthedragon.github.io/muzeji/src/pages/lapa,2.html">Go to Page 2</a></p>
     </div>
-    <div>
-        <p><a href="https://scarletthedragon.github.io/muzeji/src/pages/qr.html">QR Hub</a></p>
-    </div>
 
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function generateQR(id, url) {
+                let qrContainer = document.getElementById(id);
+                if (qrContainer) {
+                    new QRCode(qrContainer, {
+                        text: url,
+                        width: 128,
+                        height: 128
+                    });
+                } else {
+                    console.error("QR container not found: " + id);
+                }
+            }
+
+            // Wait for QRCode library to load before generating
+            setTimeout(() => {
+                generateQR("qr1", "https://scarletthedragon.github.io/muzeji/src/pages/lapa,1.html");
+                generateQR("qr2", "https://scarletthedragon.github.io/muzeji/src/pages/lapa,2.html");
+            }, 500); // Delay 500ms to ensure the library is ready
+        });
+    </script>
 </body>
 </html>
