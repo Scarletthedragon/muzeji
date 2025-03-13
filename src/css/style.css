@@ -53,8 +53,10 @@ button:hover {
     background-color: #0056b3;
 }
 
-#qrcode {
+#qr {
     margin-top: 20px;
+    justify-content:center ;
+    
 }
 
 .text-center {
