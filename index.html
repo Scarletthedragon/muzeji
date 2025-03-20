@@ -1,11 +1,12 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Navigation</title>
+    <title>QR Code Navigation & Text to Speech</title>
     <link rel="stylesheet" href="src/css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="src/js/main.js" defer></script> <!-- ✅ Fixed path -->
+    <script src="src/js/main.js" defer></script>
 </head>
 <body>
     <h1>QR Code Hub</h1>
@@ -20,29 +21,67 @@
         <p><a href="https://scarletthedragon.github.io/muzeji/src/pages/lapa,2.html">Go to Page 2</a></p>
     </div>
 
-    
+    <h2>Text to Speech & Translation</h2>
+    <textarea id="textInput" rows="4" cols="50" placeholder="Enter text here..."></textarea>
+    <br>
+    <select id="languageSelect">
+        <option value="en-us">English</option>
+        <option value="es-es">Spanish</option>
+        <option value="fr-fr">French</option>
+        <option value="de-de">German</option>
+        <option value="zh-cn">Chinese</option>
+        <option value="ru-ru">Russian</option>
+        <option value="ja-jp">Japanese</option>
+        <option value="it-it">Italian</option>
+        <option value="hi-in">Hindi</option>
+    </select>
+    <br>
+    <button onclick="translateAndSpeak()">Translate & Speak</button>
+    <p id="translatedText"></p>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            function generateQR(id, url) {
-                let qrContainer = document.getElementById(id);
-                if (qrContainer) {
-                    new QRCode(qrContainer, {
-                        text: url,
-                        width: 128,
-                        height: 128
-                    });
-                } else {
-                    console.error("QR container not found: " + id);
-                }
+        async function translateAndSpeak() {
+            const text = document.getElementById("textInput").value.trim();
+            if (!text) {
+                alert("Please enter text to translate.");
+                return;
             }
+            const targetLang = document.getElementById("languageSelect").value;
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${encodeURIComponent("en|" + targetLang.split('-')[0])}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.responseData && data.responseData.translatedText) {
+                    const translatedText = data.responseData.translatedText;
+                    document.getElementById("translatedText").innerText = translatedText;
+                    fetchVoiceRSSTTS(translatedText, targetLang);
+                } else {
+                    alert("Translation failed. Please try again later.");
+                }
+            } catch (error) {
+                alert("Error fetching translation. Check your internet connection and try again.");
+            }
+        }
 
-            // Wait for QRCode library to load before generating
-            setTimeout(() => {
-                generateQR("qr1", "https://scarletthedragon.github.io/muzeji/src/pages/lapa,1.html");
-                generateQR("qr2", "https://scarletthedragon.github.io/muzeji/src/pages/lapa,2.html");
-            }, 500); // Delay 500ms to ensure the library is ready
-        });
+        async function fetchVoiceRSSTTS(text, lang) {
+            const apiKey = "3dbc9df242e64124914a1c0e7ed082e3";
+            const url = `https://api.voicerss.org/?key=${apiKey}&hl=${lang}&src=${encodeURIComponent(text)}&c=MP3`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error("TTS API request failed.");
+                }
+                const audioBlob = await response.blob();
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+            } catch (error) {
+                alert("Error fetching TTS audio. Please check your API key or try again.");
+                console.error(error);
+            }
+        }
     </script>
 </body>
 </html>
